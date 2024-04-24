@@ -61,8 +61,14 @@ sub hello {
 
 
 @pytest.mark.parametrize('cpanm', [True, False])
+@pytest.mark.parametrize(
+    'pkg', [
+        'SHANCOCK/Perl-Tidy-20211029.tar.gz',
+        'Perl::Tidy@20211029',
+    ],
+)
 @patch('pre_commit.lang_base.exe_exists')
-def test_perl_additional_dependencies(mock_exe_exists, cpanm, tmp_path):
+def test_perl_additional_dependencies(mock_exe_exists, cpanm, pkg, tmp_path):
     mock_exe_exists.return_value = cpanm
     _make_local_repo(str(tmp_path))
 
@@ -70,7 +76,7 @@ def test_perl_additional_dependencies(mock_exe_exists, cpanm, tmp_path):
         tmp_path,
         perl,
         'perltidy --version',
-        deps=('SHANCOCK/Perl-Tidy-20211029.tar.gz',),
+        deps=(pkg,),
     )
     mock_exe_exists.assert_called_once_with('cpanm')
     assert ret == 0
